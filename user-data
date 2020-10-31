@@ -1,0 +1,83 @@
+#cloud-config
+autoinstall:
+
+  version: 1
+
+  interactive-sections:
+    - network
+
+  locale: en_GB.UTF-8
+  keyboard:
+    layout: gb
+  timezone: Europe/London
+
+  ssh:
+    allow-pw: false
+    install-server: false
+
+  packages:
+    - htop
+    - p7zip-full
+    - ubuntu-desktop
+    - unattended-upgrades
+  package_update: true
+  package_upgrade: true
+  package_reboot_if_required: true
+
+  late-commands:
+    - echo 'Late Commands'
+
+  user-data:
+    disable_root: false
+
+  resize_rootfs: false
+
+  identity:
+    hostname: ubuntu-00
+    password: "$6$svbEVZfFcJ/cG$aeDYWh6vvELEscDhhzdq.J8yKJgYTnI2ni9tVH3bp7LZBUZ3lvmN.wQFBsuqQ/kI5rwJr3qfSLIrToihE0Xkz/" # LetSleepingCatsLie!
+    username: ubuntu # root doesn't work
+
+  disk_setup:
+    /dev/sda:
+      table_type: 'mbr'
+      layout:
+        - 10
+        - 20
+        - 10
+        - 50
+        - 10
+      overwrite: true
+  
+  fs_setup:
+    - label: boot
+      filesystem: 'ext4'
+      device: /dev/vda
+      partition: vda1
+      overwrite: true
+    - label: root_fs
+      filesystem: 'ext4'
+      device: /dev/vda
+      partition: vda2
+      overwrite: true
+    - label: tmp
+      filesystem: 'ext4'
+      device: /dev/vda
+      partition: vda3
+      overwrite: true
+    - label: home
+      filesystem: 'ext4'
+      device: /dev/vda
+      partition: vda4
+      overwrite: true
+    - label: swap
+      filesystem: swap
+      device: /dev/vda
+      partition: vda5
+      overwrite: true
+  
+  mounts:
+    - ["/dev/vda1", "/boot", "ext4", "defaults", "0", "0"]
+    - ["/dev/vda2", "/", "ext4", "defaults", "0", "0"]
+    - ["/dev/vda3", "/tmp", "ext4", "defaults", "0", "0"]
+    - ["/dev/vda4", "/home", "ext4", "defaults", "0", "0"]
+    - ["/dev/vda5", "none", "swap", "sw", "0", "0"]
