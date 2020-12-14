@@ -1,0 +1,5 @@
+Install NVM
+npm install -g electron@2.0.18
+copy node.so and libffmpeg.so from there into /opt/forticlient/gui/FortiClient-linux-x64
+
+After this, forticlient works fine on Ubuntu 20.04

@@ -18,14 +18,14 @@ autoinstall:
   packages:
     - htop
     - p7zip-full
-    - ubuntu-desktop
-    - unattended-upgrades
-  package_update: true
-  package_upgrade: true
-  package_reboot_if_required: true
+  #  - ubuntu-desktop
+  #  - unattended-upgrades
+  package_update: false
+  package_upgrade: false
+  #package_reboot_if_required: true
 
-  late-commands:
-    - echo 'Late Commands'
+  # Write script to /var/lib/cloud/scripts/per-once and then
+  # this will get executed on first boot, or per-boot for every boot
 
   user-data:
     disable_root: false
@@ -42,9 +42,7 @@ autoinstall:
       table_type: 'mbr'
       layout:
         - 10
-        - 20
-        - 10
-        - 50
+        - 80
         - 10
       overwrite: true
   
@@ -59,25 +57,20 @@ autoinstall:
       device: /dev/vda
       partition: vda2
       overwrite: true
-    - label: tmp
-      filesystem: 'ext4'
-      device: /dev/vda
-      partition: vda3
-      overwrite: true
-    - label: home
-      filesystem: 'ext4'
-      device: /dev/vda
-      partition: vda4
-      overwrite: true
     - label: swap
       filesystem: swap
       device: /dev/vda
-      partition: vda5
+      partition: vda3
       overwrite: true
   
   mounts:
     - ["/dev/vda1", "/boot", "ext4", "defaults", "0", "0"]
     - ["/dev/vda2", "/", "ext4", "defaults", "0", "0"]
-    - ["/dev/vda3", "/tmp", "ext4", "defaults", "0", "0"]
-    - ["/dev/vda4", "/home", "ext4", "defaults", "0", "0"]
-    - ["/dev/vda5", "none", "swap", "sw", "0", "0"]
+    - ["/dev/vda3", "none", "swap", "sw", "0", "0"]
+
+  late-commands:
+    - "cp /cdrom/root-scripts/take-user-input.service /target/lib/systemd/system/"
+    - "ln -s /target/lib/systemd/system/take-user-input.service /target/etc/systemd/system/multi-user.target.wants/take-user-input.service"
+    - "cp /cdrom/root-scripts/test.sh /target/root/"
+    - "chmod +x /target/root/test.sh"
+

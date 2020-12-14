@@ -38,6 +38,11 @@ touch iso/nocloud/meta-data
 # Copy user-data file:
 cp user-data iso/nocloud/user-data
 
+mkdir -p iso/root-scripts/
+cp test.sh iso/root-scripts/
+cp take-user-input.service iso/root-scripts/
+chmod +x iso/root-scripts/*.sh
+
 # Remove BOOT directory:
 rm -rf 'iso/[BOOT]/'
 

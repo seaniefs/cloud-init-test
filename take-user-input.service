@@ -1,0 +1,19 @@
+[Unit]
+Description=Get user input at boot stage
+After=network.target
+Before=sshd.service systemd-logind.service getty@tty1.service
+
+[Service]
+Type=oneshot
+TTYPath=/dev/tty13
+ExecStartPre=/usr/bin/chvt 13
+ExecStart=/root/test.sh
+ExecStartPost=/usr/bin/chvt 1
+TimeoutStartSec=0
+StandardInput=tty
+TTYVHangup=yes
+TTYVTDisallocate=yes
+
+[Install]
+WantedBy=default.target
+RequiredBy=sshd.service systemd-logind.service getty@tty1.service

@@ -1,3 +1,5 @@
 *.iso
 *.img
+*.img.7z
+iso
 SHA256SUMS
