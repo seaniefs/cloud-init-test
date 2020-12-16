@@ -3,13 +3,19 @@
 if [ ! -f /root/user-added ]; then
   sleep 60
   reset
-  echo "Add new user:"
-  read -p "Username: " userNameVar
-  read -p "Full Name: " fullNameVar
+  echo "****************************************"
+  echo "** Add new user:"
+  echo "****************************************"
+  read -p "-> Username: " userNameVar
+  read -p "-> Full Name: " fullNameVar
   if [[ "$userNameVar" != "" && "$fullNameVar" != "" ]]; then
     useradd -s /bin/bash -d "/home/$userNameVar" -m -G sudo "$userNameVar" -c "$fullNameVar"
     if [[ "$?" == "0" ]]; then
-      passwd "$userNameVar"
+      passRet=1
+      while [ $passRet -ne 0 ]; do
+        passwd "$userNameVar"
+	passRet=$?
+      done
       echo -n "$userNameVar">/root/user-added
     fi
   fi
@@ -28,6 +34,18 @@ if [ -f /root/user-added ]; then
       result="$?"
       systemctl set-default multi-user
       if [[ "$result" == "0" ]]; then
+	# TODO: Handle failure
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
+	export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+	# Fix ?!?! Forticlient which is borked on 20.04
+	nvm install --lts
+	npm install electron@2.0.18
+	mv /opt/forticlient/gui/FortiClient-linux-x64/libnode.so /opt/forticlient/gui/FortiClient-linux-x64/libnode.so.old
+	mv /opt/forticlient/gui/FortiClient-linux-x64/libffmpeg.so /opt/forticlient/gui/FortiClient-linux-x64/libffmpeg.so.old
+	cp $HOME/node_modules/electron/dist/libnode.so /opt/forticlient/gui/FortiClient-linux-x64/
+	cp $HOME/node_modules/electron/dist/libffmpeg.so /opt/forticlient/gui/FortiClient-linux-x64/
+	rm -rf $HOME/node_modules
         echo "1">/root/desktop-installed
       else
         echo "Desktop/forticlient install failed [$result]"

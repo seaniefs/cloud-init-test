@@ -18,8 +18,8 @@ autoinstall:
   packages:
     - htop
     - p7zip-full
-  package_update: false
-  package_upgrade: false
+  package_update: true
+  package_upgrade: true
   #package_reboot_if_required: true
 
   # Write script to /var/lib/cloud/scripts/per-once and then
@@ -37,6 +37,9 @@ autoinstall:
 
   # https://discourse.ubuntu.com/t/please-test-autoinstalls-for-20-04/15250/81
   # https://curtin.readthedocs.io/_/downloads/en/stable/pdf/
+  swap:
+    size: 0
+
   storage:
     version: 1
     config:
