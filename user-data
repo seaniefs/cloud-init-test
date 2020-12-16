@@ -18,8 +18,6 @@ autoinstall:
   packages:
     - htop
     - p7zip-full
-  #  - ubuntu-desktop
-  #  - unattended-upgrades
   package_update: false
   package_upgrade: false
   #package_reboot_if_required: true
@@ -37,36 +35,72 @@ autoinstall:
     password: "$6$svbEVZfFcJ/cG$aeDYWh6vvELEscDhhzdq.J8yKJgYTnI2ni9tVH3bp7LZBUZ3lvmN.wQFBsuqQ/kI5rwJr3qfSLIrToihE0Xkz/" # LetSleepingCatsLie!
     username: ubuntu # root doesn't work
 
-  disk_setup:
-    /dev/sda:
-      table_type: 'mbr'
-      layout:
-        - 10
-        - 80
-        - 10
-      overwrite: true
-  
-  fs_setup:
-    - label: boot
-      filesystem: 'ext4'
-      device: /dev/vda
-      partition: vda1
-      overwrite: true
-    - label: root_fs
-      filesystem: 'ext4'
-      device: /dev/vda
-      partition: vda2
-      overwrite: true
-    - label: swap
-      filesystem: swap
-      device: /dev/vda
-      partition: vda3
-      overwrite: true
-  
-  mounts:
-    - ["/dev/vda1", "/boot", "ext4", "defaults", "0", "0"]
-    - ["/dev/vda2", "/", "ext4", "defaults", "0", "0"]
-    - ["/dev/vda3", "none", "swap", "sw", "0", "0"]
+  # https://discourse.ubuntu.com/t/please-test-autoinstalls-for-20-04/15250/81
+  # https://curtin.readthedocs.io/_/downloads/en/stable/pdf/
+  storage:
+    version: 1
+    config:
+      - id: vda
+        type: disk
+        ptable: gpt
+        name: main_disk
+        path: /dev/vda
+        grub_device: true
+      - id: vda1
+        type: partition
+        size: 1MB
+        device: vda
+        flag: bios_grub
+      - id: vda2
+        type: partition
+        size: 15GB
+        device: vda
+        flag: boot
+      - id: vda3
+        type: partition
+        size: 5GB
+        device: vda
+      - id: vda4
+        type: partition
+        size: 4G
+        flag: swap
+        device: vda
+      - id: vda5
+        type: partition
+        size: -1
+        device: vda
+      - id: vda2_root
+        type: format
+        fstype: ext4
+        volume: vda2
+      - id: vda3_tmp
+        type: format
+        fstype: ext4
+        volume: vda3
+      - id: vda4_swap
+        type: format
+        fstype: swap
+        volume: vda4
+      - id: vda5_home
+        type: format
+        fstype: ext4
+        volume: vda5
+      - id: vda2_mount
+        type: mount
+        path: /
+        device: vda2_root
+      - id: vda3_mount
+        type: mount
+        path: /tmp
+        device: vda3_tmp
+      - id: vda5_mount
+        type: mount
+        path: /home
+        device: vda5_home
+      - id: vda4_mount
+        type: mount
+        device: vda4_swap
+        path: none
 
   late-commands:
     - "cp /cdrom/root-scripts/take-user-input.service /target/lib/systemd/system/"

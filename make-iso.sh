@@ -4,9 +4,6 @@
 # - https://cloudinit.readthedocs.io/en/latest/topics/datasources/nocloud.html
 # - https://discourse.ubuntu.com/t/please-test-autoinstalls-for-20-04/15250/53
 
-# Download ISO Installer:
-#wget https://ubuntu.volia.net/ubuntu-releases/20.04.1/ubuntu-20.04.1-live-server-amd64.iso
-
 if [ -d 'iso' ]; then
   rm -rf iso
 fi
