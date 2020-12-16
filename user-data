@@ -42,6 +42,8 @@ autoinstall:
 
   storage:
     version: 1
+    swap:
+      size: 0
     config:
       - id: vda
         type: disk
