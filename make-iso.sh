@@ -33,7 +33,13 @@ fi
 touch iso/nocloud/meta-data
 
 # Copy user-data file:
-cp user-data iso/nocloud/user-data
+if [ "$1" == "kvm" ]; then
+  echo "Initialising ISO for use with kvm..."
+  cp user-data iso/nocloud/user-data
+else
+  echo "Initialising ISO for use with real hardware/VirtualBox..."
+  cat user-data | sed -e 's/vda/sda/g' | tee iso/nocloud/user-data
+fi
 
 mkdir -p iso/root-scripts/
 cp test.sh iso/root-scripts/
