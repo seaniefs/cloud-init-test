@@ -110,11 +110,29 @@ X-GNOME-Autostart-enabled=true
 StartupWMClass=jetbrains-toolbox
 MimeType=x-scheme-handler/jetbrains;
 EOF
-    mkdir -p "/home/$userNameVar/Desktop"
-    desktop-file-install --mode=0755 --dir="/home/$userNameVar/Desktop" "/home/$userNameVar/jetbrains-toolbox.desktop"
-    chmod -R +rws "/home/$userNameVar/Desktop/"
-    chown -R $userNameVar:$userNameVar "/home/$userNameVar/Desktop"
-    chown -R $userNameVar:$userNameVar "/home/$userNameVar/.local"
+mkdir -p "/home/$userNameVar/.config/autostart/"
+    cat <<EOF >"/home/$userNameVar/.config/autostart/install-jetbrains-icon.desktop"
+[Desktop Entry]
+Type=Application
+Exec=/home/$userNameVar/install-icon.sh
+Hidden=false
+X-GNOME-Autostart-enabled=true
+Name=myscript
+Comment=custom script
+EOF
+    cat <<EOF >"/home/$userNameVar/install-icon.sh"
+#!/bin/bash
+desktop-file-install --mode=0755 --dir="/home/$userNameVar/Desktop" "/home/$userNameVar/jetbrains-toolbox.desktop"
+if [[ "$?" == "0" ]]; then
+  dbus-launch gio set "/home/$userNameVar/Desktop/jetbrains-toolbox.desktop" "metadata::trusted" true
+  rm "/home/$userNameVar/.config/autostart/install-jetbrains-icon.desktop"
+fi
+EOF
+    chmod -R +rw "/home/$userNameVar/.config/autostart"
+    chmod -R +rw "/home/$userNameVar/.local"
+    chmod +rwx "/home/$userNameVar/install-icon.sh"
+    chown -R "$userNameVar:$userNameVar" "/home/$userNameVar/.config"
+    chown -R "$userNameVar:$userNameVar" "/home/$userNameVar/.local"
     echo -e "\e[32mInstallation Complete...\e[39m"
     echo "1">/root/jetbrains-installed
     systemctl set-default graphical
